@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ai-mock-interview
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-interview-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+
+databases:
+  - name: ai-interview-db
+    databaseName: ai_interview_platform
+    user: ai_interview_user
+    plan: starter

@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  profile       Profile?
+  sessions      InterviewSession[]
+}
+
+model Profile {
+  id               String    @id @default(uuid())
+  userId           String    @unique
+  name             String
+  targetRole       String
+  experienceLevel  String
+  updatedAt        DateTime  @updatedAt
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model InterviewSession {
+  id               String              @id @default(uuid())
+  userId           String
+  interviewType    InterviewType
+  status           SessionStatus       @default(IN_PROGRESS)
+  startedAt        DateTime            @default(now())
+  endedAt          DateTime?
+  durationSeconds  Int?
+  summary          String?
+  overallScore     Float?
+  turns            InterviewTurn[]
+  feedback         InterviewFeedback?
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model InterviewTurn {
+  id               String    @id @default(uuid())
+  sessionId        String
+  speaker          Speaker
+  transcript       String
+  audioUrl         String?
+  createdAt        DateTime  @default(now())
+  turnScore        Float?
+  evaluationJson   Json?
+  session          InterviewSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model InterviewFeedback {
+  id                 String    @id @default(uuid())
+  sessionId          String    @unique
+  strengths          String[]
+  weaknesses         String[]
+  followUpQuality    Float
+  structureScore     Float
+  depthScore         Float
+  communicationScore Float
+  recommendation     String
+  reportJson         Json
+  session            InterviewSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+enum InterviewType {
+  BEHAVIORAL
+  TECHNICAL
+  SYSTEM_DESIGN
+  HR_CULTURE_FIT
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum Speaker {
+  INTERVIEWER
+  CANDIDATE
+}
