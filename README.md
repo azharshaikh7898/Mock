@@ -5,58 +5,71 @@ A production-quality AI-powered mock interview platform with voice-only conversa
 ## Features
 
 - **User Authentication**: Sign up, login, and logout with JWT
-- **Profile Management**: Create and update your candidate profile
-- **Multiple Interview Types**:
-  - Behavioral interviews (STAR method)
-  - Technical interviews
-  - System Design interviews
-  - HR & Culture Fit interviews
-- **Voice-Only Experience**: Natural speech-to-text and text-to-speech conversation
-- **Adaptive Questioning**: Next question depends on your previous answers
-- **Detailed Feedback Reports**: Per-skill scores, strengths, weaknesses, and recommendations
-- **Interview History**: View past interviews and feedback
+- **Profile Management**: Create and update user profile
+- **Interview Types**: Behavioral, Technical, System Design, HR/Culture Fit
+- **Voice-Only Interface**: Uses browser's Web Speech API
+- **Feedback Reports**: Detailed feedback after each interview
+- **Session History**: View past interviews and reports
 
 ## Tech Stack
 
 - **Frontend**: Next.js 15 + React 19 + TypeScript + Tailwind CSS
 - **Backend**: Next.js API Routes
-- **Database**: PostgreSQL + Prisma ORM
-- **Auth**: JWT
-- **Voice**: Browser Web Speech API (speech recognition and synthesis)
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT
 
-## Getting Started
+## Local Development
 
-### Prerequisites
+```bash
+# Install dependencies
+npm install
 
-- Node.js 18+
-- PostgreSQL database
+# Set up environment variables
+cp .env.example .env
+# Edit .env to add your database URL and other secrets
 
-### Local Setup
+# Set up database
+npx prisma migrate dev --name init
 
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
+# Start development server
+npm run dev
 
-2. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env and fill in your database URL and JWT secret
-   ```
+# Open app at http://localhost:3000
+```
 
-3. **Set up database**
-   ```bash
-   npx prisma migrate dev --name init
-   npx prisma generate
-   ```
+## Deployment to Vercel
 
-4. **Start the development server**
-   ```bash
-   npm run dev
-   ```
+### Step 1: Push Your Code to GitHub/GitLab
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+# Create repo on GitHub/GitLab and push
+```
 
-5. **Open your browser**
-   Navigate to `http://localhost:3000`
+### Step 2: Set Up Database on Vercel (or use external provider like Supabase, Neon, etc.)
+Option 1 (Vercel Postgres):
+1. Go to your Vercel dashboard → **Storage** → **Create Database**
+2. Choose **Postgres**
+3. Follow the steps to create your database
+
+Option 2 (Neon.tech - free tier available):
+1. Go to [Neon.tech](https://neon.tech) and create an account
+2. Create a new project and database
+3. Copy the connection string
+
+### Step 3: Deploy to Vercel
+1. Go to [Vercel.com](https://vercel.com) and sign up/login
+2. Click **New Project**
+3. Import your GitHub/GitLab repo
+4. Configure project settings:
+   - **Project Name**: `ai-mock-interview` (or any name you like)
+   - **Framework Preset**: `Next.js` (should be detected automatically)
+5. Add Environment Variables (in Vercel dashboard → your project → **Settings** → **Environment Variables**):
+   - `DATABASE_URL`: Your PostgreSQL connection string (from Vercel Postgres, Neon, or other provider)
+   - `JWT_SECRET`: Generate a long random string (use `openssl rand -hex 32` to generate)
+   - `JWT_EXPIRES_IN`: `7d`
+6. Click **Deploy**!
 
 ## Environment Variables
 
@@ -68,90 +81,9 @@ DATABASE_URL="postgresql://user:password@localhost:5432/ai_interview_platform?sc
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
 JWT_EXPIRES_IN="7d"
 
-# OpenAI (optional, for enhanced AI)
+# OpenAI (optional, for enhanced AI features)
 OPENAI_API_KEY="your-openai-api-key"
 ```
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   ├── auth/
-│   │   ├── interview-types/
-│   │   ├── me/
-│   │   ├── profile/
-│   │   └── sessions/
-│   ├── dashboard/
-│   ├── interview/
-│   ├── interview-types/
-│   ├── login/
-│   ├── profile/
-│   ├── sessions/
-│   ├── signup/
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── contexts/
-│   └── AuthContext.tsx
-└── lib/
-    ├── prisma.ts
-    └── jwt.ts
-prisma/
-└── schema.prisma
-```
-
-## Demo Script
-
-### End-to-End Interview Experience
-
-1. **Sign Up**: Create a new account with your email and password
-2. **Complete Profile**: Enter your name, target role, and experience level
-3. **Choose Interview Type**: Select from Behavioral, Technical, System Design, or HR & Culture Fit
-4. **Start Interview**:
-   - The AI interviewer will greet you and ask the first question
-   - Click "Start Speaking" to answer using your microphone
-   - The AI will evaluate your answer and ask a follow-up question
-5. **End Interview**: Click "End Interview" when you're done
-6. **View Feedback**: See your scores, strengths, and areas to improve
-
-## Voice Integration
-
-This demo uses the browser's built-in Web Speech API for:
-- **Speech Recognition**: Converts your voice to text
-- **Speech Synthesis**: Converts AI responses to audio
-
-For production use with higher quality voice, you could integrate:
-- OpenAI Realtime API
-- ElevenLabs Conversational AI
-- Retell AI
-
-## Cost Analysis
-
-### Browser Web Speech API (Current)
-- **Cost**: Free!
-- **Pros**: No API keys needed, works offline, unlimited usage
-- **Cons**: Voice quality varies by browser, limited customization
-
-### OpenAI Realtime API (Optional Upgrade)
-- **Cost**: ~$0.006 per minute of audio (input + output)
-- **Pros**: High-quality voice, low latency, good naturalness
-- **Cons**: Requires API key, costs add up with usage
-
-### ElevenLabs Conversational AI (Optional Upgrade)
-- **Cost**: ~$0.005 per minute
-- **Pros**: Extremely natural voices, wide voice selection
-- **Cons**: Higher cost at scale
-
-## Future Enhancements
-
-- Integrate OpenAI/LangGraph for truly adaptive, stateful conversation
-- Add real-time whisper transcription for better accuracy
-- Implement more sophisticated evaluation metrics
-- Add video recording option
-- Support for longer interviews
-- Interview practice question bank
 
 ## License
 
